@@ -152,19 +152,22 @@
   (setq translation (google-translator-trim-space translation))
   (puthash origin (concat origin "\n" translation "\n") google-translator-cache-data))
 
+(defun google-translator-seq-first (v)
+  (aref v 0))
+
 (defun google-translator-cache-result (json)
   (mapc (lambda (item) 
           (let ((origin (aref item 1))
                 (translation (aref item 0)))
             (google-translator-puthash origin translation)))
-        (seq-filter 'seq-first json)))
+        (seq-filter 'google-translator-seq-first json)))
 
 (defun google-translator-default-format-result-function (json)
   (mapconcat (lambda (item)
                (let ((origin (google-translator-trim-space (aref item 1)))
                      (translation (google-translator-trim-space (aref item 0))))
                  (concat origin "\n" translation "\n")))
-             (seq-filter #'seq-first json) ""))
+             (seq-filter #'google-translator-seq-first json) ""))
 
 (defun google-translator-default-show-result-function (result)
   (require 'posframe)
